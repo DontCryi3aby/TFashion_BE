@@ -9,15 +9,24 @@ use App\Http\Resources\V1\ProductResource;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use Symfony\Component\HttpFoundation\Request;
+use App\Filters\V1\ProductsFilter;
 
 class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return new ProductCollection(Product::paginate());
+        $filter = new ProductsFilter();
+        $queryItems = $filter->transform($request);
+
+        if(count($queryItems) == 0) {
+            return new ProductCollection(Product::paginate());
+        } else {
+            return new ProductCollection(Product::where($queryItems)->paginate()->withQueryString());
+        }
     }
 
     /**
