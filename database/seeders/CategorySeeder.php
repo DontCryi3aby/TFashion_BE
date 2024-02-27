@@ -14,19 +14,6 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
-        // DB::table('categories')->insert([
-        //     'name' => 'Spring Premium Suite'
-        // ]);
-        // DB::table('categories')->insert([
-        //     'name' => 'Summer Deluxe'
-        // ]);
-        // DB::table('categories')->insert([
-        //     'name' => 'Autumn Chamber'
-        // ]);
-        // DB::table('categories')->insert([
-        //     'name' => 'Winter Suite'
-        // ]);
-
         Category::factory()->count(1)->hasProducts(20)->create();
         Category::factory()->count(1)->hasProducts(10)->create();
         Category::factory()->count(1)->hasProducts(40)->create();

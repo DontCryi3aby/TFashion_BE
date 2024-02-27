@@ -18,9 +18,7 @@ class SizeFactory extends Factory
     public function definition(): array
     {
         return [
-            'product_id' => Product::factory(),
-            'size' => $this->faker->randomElement(['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL']),
-            'quantity' => $this->faker->numberBetween(5, 20)
+            'name' => $this->faker->randomLetter()
         ];
     }
 }

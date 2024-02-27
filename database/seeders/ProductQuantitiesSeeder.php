@@ -2,17 +2,17 @@
 
 namespace Database\Seeders;
 
-use App\Models\Order_Details;
+use App\Models\ProductQuantities;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class OrderDetailsSeeder extends Seeder
+class ProductQuantitiesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Order_Details::factory()->count(60)->create();
+        ProductQuantities::factory()->count(100)->create();
     }
 }

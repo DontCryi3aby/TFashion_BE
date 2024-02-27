@@ -13,7 +13,7 @@ class ProductSeeder extends Seeder
      */
     public function run(): void
     {
-        Product::factory()->count(20)->hasSizes(4)->hasGalleries(3)->hasReviews(2)->create();
-        Product::factory()->count(30)->hasSizes(5)->hasGalleries(2)->hasReviews(1)->create();
+        // Product::factory()->count(20)->hasSizes(4)->hasGalleries(3)->hasReviews(2)->create();
+        // Product::factory()->count(30)->hasSizes(5)->hasGalleries(2)->hasReviews(1)->create();
     }
 }

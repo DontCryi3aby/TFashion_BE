@@ -13,9 +13,7 @@ return new class extends Migration
     {
         Schema::create('sizes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained();
-            $table->string('size', 20);
-            $table->integer('quantity');
+            $table->string('name', 20);
         });
     }
 

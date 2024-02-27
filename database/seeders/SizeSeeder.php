@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Size;
 use Illuminate\Database\Seeder;
 
 class SizeSeeder extends Seeder
@@ -12,6 +12,6 @@ class SizeSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        Size::factory()->count(6)->create();
     }
 }
