@@ -2,20 +2,30 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Filters\V1\FeedbacksFilter;
 use App\Http\Controllers\Controller;
 
 use App\Models\Feedback;
 use App\Http\Requests\StoreFeedbackRequest;
 use App\Http\Requests\UpdateFeedbackRequest;
+use App\Http\Resources\V1\FeedbackCollection;
+use Illuminate\Http\Request;
 
 class FeedbackController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $filter = new FeedbacksFilter();
+        $queryItems = $filter->transform($request);
+
+        if(count($queryItems) == 0) {
+            return new FeedbackCollection(Feedback::paginate());
+        } else {
+            return new FeedbackCollection(Feedback::where($queryItems)->paginate()->withQueryString());
+        }
     }
 
     /**

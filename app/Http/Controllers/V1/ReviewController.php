@@ -2,20 +2,30 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Filters\V1\ReviewsFilter;
 use App\Http\Controllers\Controller;
 
+use App\Http\Resources\V1\ReviewCollection;
 use App\Models\Review;
 use App\Http\Requests\StoreReviewRequest;
 use App\Http\Requests\UpdateReviewRequest;
+use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $filter = new ReviewsFilter();
+        $queryItems = $filter->transform($request);
+
+        if(count($queryItems) == 0) {
+            return new ReviewCollection(Review::paginate());
+        } else {
+            return new ReviewCollection(Review::where($queryItems)->paginate()->withQueryString());
+        }
     }
 
     /**

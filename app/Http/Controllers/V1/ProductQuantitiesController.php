@@ -1,19 +1,31 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\V1;
+
+use App\Filters\V1\ProductQuantitiesFilter;
+use App\Http\Controllers\Controller;
 
 use App\Models\ProductQuantities;
 use App\Http\Requests\StoreProductQuantitiesRequest;
 use App\Http\Requests\UpdateProductQuantitiesRequest;
+use App\Http\Resources\V1\ProductQuantityCollection;
+use Illuminate\Http\Request;
 
 class ProductQuantitiesController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $filter = new ProductQuantitiesFilter();
+        $queryItems = $filter->transform($request);
+
+        if(count($queryItems) == 0) {
+            return new ProductQuantityCollection(ProductQuantities::paginate());
+        } else {
+            return new ProductQuantityCollection(ProductQuantities::where($queryItems)->paginate()->withQueryString());
+        }
     }
 
     /**

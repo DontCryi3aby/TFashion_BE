@@ -2,21 +2,30 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Filters\V1\CategoriesFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\CategoryCollection;
 use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\V1\CategoryResource;
+use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return new CategoryCollection(Category::paginate());
+        $filter = new CategoriesFilter();
+        $queryItems = $filter->transform($request);
+
+        if(count($queryItems) == 0) {
+            return new CategoryCollection(Category::paginate());
+        } else {
+            return new CategoryCollection(Category::where($queryItems)->paginate()->withQueryString());
+        }
     }
 
     /**

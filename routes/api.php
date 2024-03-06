@@ -39,4 +39,5 @@ Route::group(['prefix' => 'v1'], function() {
     Route::apiResource('reviews', ReviewController::class);
     Route::apiResource('roles', RoleController::class);
     Route::apiResource('sizes', SizeController::class);
+    Route::apiResource('product_quantities', SizeController::class);
 });

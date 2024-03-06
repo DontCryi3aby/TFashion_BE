@@ -2,20 +2,30 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Filters\V1\OrderDetailsFilter;
 use App\Http\Controllers\Controller;
 
 use App\Models\Order_Details;
 use App\Http\Requests\StoreOrder_DetailsRequest;
 use App\Http\Requests\UpdateOrder_DetailsRequest;
+use App\Http\Resources\V1\Order_DetailsCollection;
+use Illuminate\Http\Request;
 
 class OrderDetailsController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $filter = new OrderDetailsFilter();
+        $queryItems = $filter->transform($request);
+
+        if(count($queryItems) == 0) {
+            return new Order_DetailsCollection(Order_Details::paginate());
+        } else {
+            return new Order_DetailsCollection(Order_Details::where($queryItems)->paginate()->withQueryString());
+        }
     }
 
     /**
