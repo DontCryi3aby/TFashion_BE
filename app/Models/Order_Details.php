@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Order_Details extends Model
 {
     use HasFactory;
+    protected $table = 'order_details';
     public $timestamps = false;
 
     public function product(): BelongsTo

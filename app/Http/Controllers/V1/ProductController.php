@@ -11,6 +11,7 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use Symfony\Component\HttpFoundation\Request;
 use App\Filters\V1\ProductsFilter;
+use Illuminate\Support\Arr;
 
 class ProductController extends Controller
 {
@@ -22,11 +23,9 @@ class ProductController extends Controller
         $filter = new ProductsFilter();
         $queryItems = $filter->transform($request);
 
-        if(count($queryItems) == 0) {
-            return new ProductCollection(Product::paginate());
-        } else {
-            return new ProductCollection(Product::where($queryItems)->paginate()->withQueryString());
-        }
+        $products = Product::where($queryItems)->with('galleries');
+
+        return new ProductCollection($products->paginate()->withQueryString());
     }
 
     /**
@@ -50,6 +49,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+        $product = $product->loadMissing('galleries');
         return new ProductResource($product);
     }
 

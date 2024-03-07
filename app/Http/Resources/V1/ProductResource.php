@@ -22,7 +22,8 @@ class ProductResource extends JsonResource
             'description' => $this->description,
             'quantity' => $this->quantity,
             'price' => $this->price,
-            'discount' => $this->discount
+            'discount' => $this->discount,
+            'galleries' => GalleryResource::collection($this->whenLoaded('galleries'))
         ];
     }
 }
