@@ -9,6 +9,7 @@ use App\Models\Customer;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
 use App\Http\Resources\V1\CustomerCollection;
+use App\Http\Resources\V1\CustomerResource;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
@@ -21,19 +22,8 @@ class CustomerController extends Controller
         $filter = new CustomersFilter();
         $queryItems = $filter->transform($request);
 
-        if(count($queryItems) == 0) {
-            return new CustomerCollection(Customer::paginate());
-        } else {
-            return new CustomerCollection(Customer::where($queryItems)->paginate()->withQueryString());
-        }
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $customers = Customer::where($queryItems);
+        return new CustomerCollection($customers->paginate()->withQueryString());
     }
 
     /**
@@ -41,38 +31,38 @@ class CustomerController extends Controller
      */
     public function store(StoreCustomerRequest $request)
     {
-        //
+        return new CustomerResource(Customer::create($request->all()));
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Customer $customer)
+    public function show($id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Customer $customer)
-    {
-        //
+        $customer = Customer::findOrFail($id);
+        return new CustomerResource($customer);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCustomerRequest $request, Customer $customer)
+    public function update(UpdateCustomerRequest $request, $id)
     {
-        //
+        $customer = Customer::findOrFail($id);
+        $customer->update($request->all());
+        return new CustomerResource($customer);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Customer $customer)
+    public function destroy($id)
     {
-        //
+        $customer = Customer::findOrFail($id);
+        $customer->delete();
+        return response()->json([
+            'status'=> 200,
+            'message' => "Customer deleted successfully!"
+        ]);
     }
 }

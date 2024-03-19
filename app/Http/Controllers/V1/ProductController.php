@@ -11,7 +11,6 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use Symfony\Component\HttpFoundation\Request;
 use App\Filters\V1\ProductsFilter;
-use Illuminate\Support\Arr;
 
 class ProductController extends Controller
 {
@@ -29,51 +28,43 @@ class ProductController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(StoreProductRequest $request)
     {
-        //
+        return new ProductResource(Product::create($request->all()));
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show($id)
     {
+        $product = Product::findOrFail($id);
         $product = $product->loadMissing('galleries');
         return new ProductResource($product);
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Product $product)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProductRequest $request, Product $product)
+    public function update(UpdateProductRequest $request, $id)
     {
-        //
+        $product = Product::findOrFail($id);
+        $product->update($request->all());
+        return new ProductResource($product);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product)
+    public function destroy($id)
     {
-        //
+        $product = Product::findOrFail($id);
+        $product->delete();
+        return response()->json([
+            'status'=> 200,
+            'message' => "Product deleted successfully!"
+        ]);
     }
 }
