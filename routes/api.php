@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\v1\AuthController;
 use App\Http\Controllers\V1\CategoryController;
 use App\Http\Controllers\V1\CustomerController;
 use App\Http\Controllers\V1\FeedbackController;
@@ -40,4 +41,14 @@ Route::group(['prefix' => 'v1'], function() {
     Route::apiResource('roles', RoleController::class);
     Route::apiResource('sizes', SizeController::class);
     Route::apiResource('product_quantities', SizeController::class);
+});
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'v1/auth'
+], function ($router) {
+    Route::post('login', [AuthController::class, 'login']);
+    Route::get('profile', [AuthController::class, 'profile']);
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('refresh', [AuthController::class, 'refresh']);
 });
