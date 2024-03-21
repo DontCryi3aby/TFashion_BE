@@ -13,8 +13,8 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        Role::factory()->count(3)->hasCustomers(30)->create();
-        Role::factory()->count(3)->hasCustomers(2)->create();
-        Role::factory()->count(3)->hasCustomers(10)->create();
+        Role::factory()->count(3)->hasUsers(30)->create();
+        Role::factory()->count(3)->hasUsers(2)->create();
+        Role::factory()->count(3)->hasUsers(10)->create();
     }
 }

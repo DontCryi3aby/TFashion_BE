@@ -6,7 +6,7 @@ use App\Filters\ApiFilter;
 
 class OrdersFilter extends ApiFilter {
     protected $allowParams = [
-        'customer_id' => ['eq'],
+        'user_id' => ['eq'],
         'email' => ['eq'],
         'phone_number' => ['eq'],
         'order_date' => ['eq', 'lt', 'lte', 'gt', 'gte'],

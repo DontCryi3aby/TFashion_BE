@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Customer;
+use App\Models\User;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -19,7 +19,7 @@ class ReviewFactory extends Factory
     public function definition(): array
     {
         return [
-            'customer_id' => Customer::factory(),
+            'user_id' => User::factory(),
             'product_id' => Product::factory(),
             'rate' => $this->faker->randomElement([1,2,3,4,5]),
             'description' => $this->faker->text(),

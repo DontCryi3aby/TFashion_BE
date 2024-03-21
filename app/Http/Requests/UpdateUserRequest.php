@@ -2,14 +2,14 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Customer;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateCustomerRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     public function handlePreventUpdateField($attribute, $value, $fail, $field) {
-        if ($value !== Customer::find($this->route('customer'))->$field) {
+        if ($value !== User::find($this->route('customer'))->$field) {
             $fail("You are not allowed to update the $field.");
         }
     }
@@ -35,7 +35,7 @@ class UpdateCustomerRequest extends FormRequest
                 'fullname' => ['required', 'string', 'max:50'],
                 'email' => ['required', 'email:rfc,dns',
                 function ($attribute, $value, $fail) {
-                    if ($value !== Customer::find($this->route('customer'))->$attribute) {
+                    if ($value !== User::find($this->route('customer'))->$attribute) {
                         $fail("You are not allowed to update the email.");
                     }
                 },
@@ -43,7 +43,7 @@ class UpdateCustomerRequest extends FormRequest
                 'avatar' => ['sometimes', "file", "mimes:jpg,jpeg,png"],
                 'phone_number' => ['required',
                 function ($attribute, $value, $fail) {
-                    if ($value !== Customer::find($this->route('customer'))->$attribute) {
+                    if ($value !== User::find($this->route('customer'))->$attribute) {
                         $fail("You are not allowed to update the phone number.");
                     }
                 }
@@ -56,7 +56,7 @@ class UpdateCustomerRequest extends FormRequest
                 'fullname' => ['sometimes', 'string', 'max:50'],
                 'email' => ['sometimes', 'email:rfc,dns',
                 function ($attribute, $value, $fail) {
-                    if ($value !== Customer::find($this->route('customer'))->$attribute) {
+                    if ($value !== User::find($this->route('customer'))->$attribute) {
                         $fail("You are not allowed to update the email.");
                     }
                 },
@@ -64,7 +64,7 @@ class UpdateCustomerRequest extends FormRequest
                 'avatar' => ['sometimes', "file", "mimes:jpg,jpeg,png"],
                 'phone_number' => ['sometimes',
                 function ($attribute, $value, $fail) {
-                    if ($value !== Customer::find($this->route('customer'))->$attribute) {
+                    if ($value !== User::find($this->route('customer'))->$attribute) {
                         $fail("You are not allowed to update the phone number.");
                     }
                 }

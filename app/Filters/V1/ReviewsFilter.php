@@ -7,7 +7,7 @@ use App\Filters\ApiFilter;
 class ReviewsFilter extends ApiFilter {
     protected $allowParams = [
         'product_id' => ['eq'],
-        'customer_id' => ['eq'],
+        'user_id' => ['eq'],
         'rate' => ['eq', 'lt', 'gt', 'lte', 'gte'],
     ];
 

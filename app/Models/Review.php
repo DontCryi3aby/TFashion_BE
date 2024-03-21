@@ -12,7 +12,7 @@ class Review extends Model
     public $timestamps = false;
     public function customer(): BelongsTo
     {
-        return $this->belongsTo(Customer::class);
+        return $this->belongsTo(User::class);
     }
 
     public function product(): BelongsTo
