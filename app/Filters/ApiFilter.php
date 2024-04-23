@@ -34,6 +34,22 @@ class ApiFilter {
                 }
             }
         }
-        return $eloQuery;
+
+        $sort = [
+            'field' => '',
+            'type' => 'asc' 
+        ];
+
+        if($field = $request->query('_sort')) {
+            $sort['field'] = $field;
+            if($request->query('_order') == 'desc') {
+                $sort['type'] = "desc";
+            }
+        }
+
+        return [
+            $sort,
+            $eloQuery
+        ];
     }
 }

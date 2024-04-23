@@ -22,8 +22,17 @@ class UserController extends Controller
         $filter = new UsersFilter();
         $queryItems = $filter->transform($request);
 
-        $customers = User::where($queryItems);
-        return new UserCollection($customers->paginate()->withQueryString());
+        
+        [$sort, $queryItems] = $filter->transform($request);
+        // Filter
+        $users = User::where($queryItems);
+
+        // Sort
+        if($sort['field']) {
+            $users = $users->orderBy($sort['field'], $sort['type']);
+        }
+        
+        return new UserCollection($users->paginate()->withQueryString());
     }
 
     /**
@@ -39,8 +48,8 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $customer = User::findOrFail($id);
-        return new UserResource($customer);
+        $user = User::findOrFail($id);
+        return new UserResource($user);
     }
 
     /**
@@ -48,9 +57,9 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, $id)
     {
-        $customer = User::findOrFail($id);
-        $customer->update($request->all());
-        return new UserResource($customer);
+        $user = User::findOrFail($id);
+        $user->update($request->all());
+        return new UserResource($user);
     }
 
     /**
@@ -58,8 +67,8 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $customer = User::findOrFail($id);
-        $customer->delete();
+        $user = User::findOrFail($id);
+        $user->delete();
         return response()->json([
             'status'=> 200,
             'message' => "User deleted successfully!"

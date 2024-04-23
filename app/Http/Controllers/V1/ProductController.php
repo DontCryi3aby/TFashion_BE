@@ -20,9 +20,15 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $filter = new ProductsFilter();
-        $queryItems = $filter->transform($request);
-
+        
+        // Filter
+        [$sort, $queryItems] = $filter->transform($request);
         $products = Product::where($queryItems)->with('galleries');
+
+        // Sort
+        if($sort['field']) {
+            $products = $products->orderBy($sort['field'], $sort['type']);
+        }
 
         return new ProductCollection($products->paginate()->withQueryString());
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\v1;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Carbon\Carbon;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -11,7 +12,7 @@ class AuthController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login', 'refresh']]);
     }
 
     public function login()
@@ -54,8 +55,16 @@ class AuthController extends Controller
             }
             
             // Delete old accessToken & create new accessToken
-            $token = auth()->refresh();
+            // Add old access token to blacklist
+            $oldToken = request()->bearerToken();
+            if($oldToken) {
+                $tokenExp = Carbon::createFromTimestamp(JWTAuth::getJWTProvider()->decode($oldToken)["exp"]);
+                if(!$tokenExp->isPast()) {
+                    auth()->invalidate();
+                }
+            }
             
+            $token = auth()->login($user);
             $refreshToken = $this->createRefreshToken();
             return $this->respondWithToken($token, $refreshToken);
         } catch(JWTException $exception) {
@@ -69,7 +78,7 @@ class AuthController extends Controller
             'access_token' => $token,
             'refresh_token' => $refreshToken,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => auth()->factory()->getTTL()
         ]);
     }
 
