@@ -10,6 +10,7 @@ class Gallery extends Model
 {
     use HasFactory;
     public $timestamps = false;
+    protected $guarded = [];
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

@@ -11,7 +11,7 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\V1\UserCollection;
 use App\Http\Resources\V1\UserResource;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Storage;
 class UserController extends Controller
 {
     /**
@@ -40,7 +40,13 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        return new UserResource(User::create($request->all()));
+        $user = User::create($request->except("avatar"));
+        if($request->avatar) {
+            $path = $request->file('avatar')->store('avatars', "public");
+            $$request()->user()->update(["avatar" => $path]);
+        }
+        
+        return new UserResource($user);
     }
 
     /**
@@ -58,7 +64,16 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, $id)
     {
         $user = User::findOrFail($id);
-        $user->update($request->all());
+        $user->update($request->except("avatar"));
+
+        if($request->avatar) {
+            $path = $request->file('avatar')->store('avatars', "public");
+            if($oldAvatar = $request->user()->avatar){
+                Storage::disk('public')->delete($oldAvatar);
+            }
+            $request->user()->update(["avatar" => $path]);
+        }
+
         return new UserResource($user);
     }
 

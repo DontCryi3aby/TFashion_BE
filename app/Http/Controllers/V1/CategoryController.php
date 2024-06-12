@@ -19,13 +19,18 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         $filter = new CategoriesFilter();
-        $queryItems = $filter->transform($request);
+        [$sort, $queryItems] = $filter->transform($request);
 
-        if(count($queryItems) == 0) {
-            return new CategoryCollection(Category::paginate());
-        } else {
-            return new CategoryCollection(Category::where($queryItems)->paginate()->withQueryString());
+        $categories = Category::where($queryItems);
+
+
+        // Sort
+        if($sort['field']) {
+            $categories = $categories->orderBy($sort['field'], $sort['type']);
         }
+
+        
+        return new CategoryCollection($categories->paginate()->withQueryString());
     }
 
     /**

@@ -11,6 +11,9 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use Symfony\Component\HttpFoundation\Request;
 use App\Filters\V1\ProductsFilter;
+use App\Models\Gallery;
+use Exception;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -38,7 +41,26 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        return new ProductResource(Product::create($request->all()));
+        DB::beginTransaction();
+        try {
+            $product = Product::create($request->except("galleries"));
+
+            if($request->hasFile('galleries')){
+                $galleries = $request->file('galleries');
+                foreach ($galleries as $gallery) {
+                    $newGallery = new Gallery();
+                    $newGallery->thumbnail = $gallery->store('products', "public");
+                    $newGallery->product_id = $product->id;
+                    $newGallery->save();
+                }
+            }
+            DB::commit();
+            
+            return new ProductResource($product);
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new Exception($e->getMessage());
+        }
     }
 
     /**

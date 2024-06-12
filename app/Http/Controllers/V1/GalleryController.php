@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1;
 use App\Filters\V1\GalleriesFilter;
 use App\Http\Controllers\Controller;
 
+use App\Http\Resources\V1\GalleryResource;
 use App\Models\Gallery;
 use App\Http\Requests\StoreGalleryRequest;
 use App\Http\Requests\UpdateGalleryRequest;
@@ -19,13 +20,11 @@ class GalleryController extends Controller
     public function index(Request $request)
     {
         $filter = new GalleriesFilter();
-        $queryItems = $filter->transform($request);
+        [$sort, $queryItems] = $filter->transform($request);
 
-        if(count($queryItems) == 0) {
-            return new GalleryCollection(Gallery::paginate());
-        } else {
-            return new GalleryCollection(Gallery::where($queryItems)->paginate()->withQueryString());
-        }
+        $galleries = Gallery::where($queryItems);
+        
+        return new GalleryCollection($galleries->paginate()->withQueryString());
     }
 
     /**
@@ -33,7 +32,7 @@ class GalleryController extends Controller
      */
     public function create()
     {
-        //
+        
     }
 
     /**
@@ -41,7 +40,8 @@ class GalleryController extends Controller
      */
     public function store(StoreGalleryRequest $request)
     {
-        //
+        $gallery = Gallery::create($request->all());
+        return new GalleryResource($gallery);
     }
 
     /**

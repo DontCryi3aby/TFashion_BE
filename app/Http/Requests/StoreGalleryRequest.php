@@ -11,7 +11,7 @@ class StoreGalleryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class StoreGalleryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'category_id' => ["required", "exists:products,id"],
+            'thumbnail' => ['required', "file", "mimes:jpg,jpeg,png"],
         ];
     }
 }
