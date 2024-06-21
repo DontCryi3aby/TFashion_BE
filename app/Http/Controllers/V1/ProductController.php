@@ -31,9 +31,11 @@ class ProductController extends Controller
         // Sort
         if($sort['field']) {
             $products = $products->orderBy($sort['field'], $sort['type']);
-        }
+        };
 
-        return new ProductCollection($products->paginate()->withQueryString());
+        $paginate = $request->query('per_page') ?? 15;
+
+        return new ProductCollection($products->paginate($paginate)->withQueryString());
     }
 
     /**
@@ -78,9 +80,25 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, $id)
     {
-        $product = Product::findOrFail($id);
-        $product->update($request->all());
-        return new ProductResource($product);
+        DB::beginTransaction();
+        try {
+            $product = Product::findOrFail($id);
+            $product->update($request->except('galleries'));
+            if($request->hasFile('galleries')){
+                $galleries = $request->file('galleries');
+                foreach ($galleries as $gallery) {
+                    $newGallery = new Gallery();
+                    $newGallery->thumbnail = $gallery->store('products', "public");
+                    $newGallery->product_id = $product->id;
+                    $newGallery->save();
+                }
+            }
+            DB::commit();
+            return new ProductResource($product);
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new Exception($e->getMessage());
+        }
     }
 
     /**

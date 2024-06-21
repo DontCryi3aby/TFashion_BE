@@ -11,6 +11,7 @@ use App\Http\Requests\StoreGalleryRequest;
 use App\Http\Requests\UpdateGalleryRequest;
 use App\Http\Resources\V1\GalleryCollection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class GalleryController extends Controller
 {
@@ -71,8 +72,16 @@ class GalleryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Gallery $gallery)
+    public function destroy($id)
     {
-        //
+        $gallery = Gallery::findOrFail($id);
+        if($path = $gallery->thumbnail) {
+            Storage::disk('public')->delete($path);
+        }
+        $gallery->delete();
+        return response()->json([
+            'status'=> 200,
+            'message' => "Gallery deleted successfully!"
+        ]);
     }
 }
