@@ -10,7 +10,9 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\V1\UserCollection;
 use App\Http\Resources\V1\UserResource;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 class UserController extends Controller
 {
@@ -63,18 +65,25 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, $id)
     {
-        $user = User::findOrFail($id);
-        $user->update($request->except("avatar"));
+        DB::beginTransaction();
+        try {
+            $user = User::findOrFail($id);
+            $user->update($request->except("avatar"));
 
-        if($request->avatar) {
-            $path = $request->file('avatar')->store('avatars', "public");
-            if($oldAvatar = $request->user()->avatar){
-                Storage::disk('public')->delete($oldAvatar);
+            if($request->hasFile('avatar')) {
+                $path = $request->file('avatar')->store('avatars', "public");
+                if($oldAvatar = $user->avatar){
+                    Storage::disk('public')->delete($oldAvatar);
+                }
+                $user->update(["avatar" => $path]);
             }
-            $request->user()->update(["avatar" => $path]);
-        }
+            DB::commit();
 
-        return new UserResource($user);
+            return new UserResource($user);
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new Exception($e->getMessage());
+        }
     }
 
     /**
