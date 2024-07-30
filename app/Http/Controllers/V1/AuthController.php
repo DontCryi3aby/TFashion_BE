@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\v1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\V1\UserResource;
 use App\Models\User;
 use Carbon\Carbon;
+use Exception;
+use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -12,7 +15,33 @@ class AuthController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'refresh']]);
+        $this->middleware('auth:api', ['except' => ['login', 'refresh', 'register']]);
+    }
+    public function register()
+    {
+        DB::beginTransaction();
+        try {
+            $user = User::create([
+                'email' => request()->email,
+                'fullname' => request()->fullname,
+                'password' => request()->password,
+                'phone_number' => request()->phone_number,
+                'address' => request()->address,
+                'role_id' => 3,
+            ]);
+
+            if(request()->hasFile('avatar')){
+                $avatar = request()->file('avatar');
+                $user->avatar = $avatar->store('avatars', "public");
+                $user->save();
+            }
+            DB::commit();
+            
+            return new UserResource($user);
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new Exception($e->getMessage());
+        }
     }
 
     public function login()
@@ -26,6 +55,7 @@ class AuthController extends Controller
 
         return $this->respondWithToken($token, $refreshToken);
     }
+
 
     public function profile()
     {
