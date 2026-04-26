@@ -6,12 +6,14 @@ use App\Filters\ApiFilter;
 
 class ProductsFilter extends ApiFilter {
     protected $allowParams = [
-        'category_id' => ['eq'],
+        'product_type' => ['eq'],
         'title' => ['eq'],
-        'description' => ['eq'],
+        'handle' => ['eq'],
+        'vendor' => ['eq'],
         'quantity' => ['eq', 'gt', 'lt', 'gte', 'lte'],
         'price' => ['eq', 'gt', 'lt', 'gte', 'lte'],
-        'discount' => ['eq', 'gt', 'lt', 'gte', 'lte']
+        'discount' => ['eq', 'gt', 'lt', 'gte', 'lte'],
+        'status' => ['eq'],
     ];
 
     protected $columnMap = [];

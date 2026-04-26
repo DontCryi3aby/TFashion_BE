@@ -3,43 +3,50 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateProductRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         $method = $this->method();
-        if($method == "PUT") {
-            return [
-                'category_id' => ["required", "exists:categories,id"],
-                'title' => ["required", "string", "max:255"],
-                'description' => ["required", "string"],
-                'quantity' => ["required", "numeric"],
-                'price' => ["required", "numeric"],
-                'discount' => ["sometimes", "numeric"]
-            ];
-        } else {
-            return [
-                'category_id' => ["sometimes", "exists:categories,id"],
-                'title' => ["sometimes", "string", "max:255"],
-                'description' => ["sometimes", "string"],
-                'quantity' => ["sometimes", "numeric"],
-                'price' => ["sometimes", "numeric"],
-                'discount' => ["sometimes", "numeric"]
-            ];
+        $shopify = [
+            'product_type' => ['sometimes', 'nullable', 'string', 'max:100'],
+            'body_html' => ['sometimes', 'string'],
+            'vendor' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'handle' => [
+                'sometimes',
+                'nullable',
+                'string',
+                'max:255',
+                Rule::unique('products', 'handle')->ignore($this->route('product')),
+            ],
+            'status' => ['sometimes', 'string', 'in:draft,active,archived'],
+            'published_at' => ['sometimes', 'nullable', 'date'],
+        ];
+
+        if ($method == 'PUT') {
+            return array_merge([
+                'title' => ['required', 'string', 'max:255'],
+                'quantity' => ['required', 'numeric'],
+                'price' => ['required', 'numeric'],
+                'discount' => ['sometimes', 'nullable', 'numeric'],
+            ], $shopify);
         }
+
+        return array_merge([
+            'title' => ['sometimes', 'string', 'max:255'],
+            'quantity' => ['sometimes', 'numeric'],
+            'price' => ['sometimes', 'numeric'],
+            'discount' => ['sometimes', 'nullable', 'numeric'],
+        ], $shopify);
     }
 }

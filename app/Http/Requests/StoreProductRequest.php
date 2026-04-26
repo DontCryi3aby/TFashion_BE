@@ -6,30 +6,27 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreProductRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'category_id' => ["required", "exists:categories,id"],
-            'title' => ["required", "string", "max:255"],
-            'description' => ["required", "string"],
-            'quantity' => ["required", "numeric"],
-            'price' => ["required", "numeric"],
-            'discount' => ["sometimes", "numeric"],
-            'galleries' => ['required'],
-            'galleries.*' => ["file", "mimes:jpg,jpeg,png|max:4096"],
+            'product_type' => ['sometimes', 'nullable', 'string', 'max:100'],
+            'title' => ['required', 'string', 'max:255'],
+            'body_html' => ['required', 'string'],
+            'vendor' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'handle' => ['sometimes', 'nullable', 'string', 'max:255', 'unique:products,handle'],
+            'status' => ['sometimes', 'string', 'in:draft,active,archived'],
+            'published_at' => ['sometimes', 'nullable', 'date'],
+            'quantity' => ['required', 'numeric'],
+            'price' => ['required', 'numeric'],
+            'discount' => ['sometimes', 'nullable', 'numeric'],
         ];
     }
 }

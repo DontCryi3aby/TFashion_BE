@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -11,20 +10,22 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class ProductFactory extends Factory
 {
     /**
-     * Define the model's default state.
-     *
      * @return array<string, mixed>
      */
     public function definition(): array
     {
         return [
-            'category_id' => Category::factory(),
+            'product_type' => $this->faker->randomElement(['t-shirts', 'apparel', 'accessories']),
             'title' => $this->faker->sentence(),
-            'description' => $this->faker->text(),
+            'body_html' => '<p>'.$this->faker->paragraph().'</p>',
+            'vendor' => $this->faker->company(),
+            'handle' => $this->faker->unique()->slug(3),
+            'status' => 'active',
+            'published_at' => now(),
             'quantity' => $this->faker->numberBetween(20, 100),
             'price' => $this->faker->numberBetween(10, 100),
-            'discount' => $this->faker->numberBetween(10, 100),
-            'deleted' => false
+            'discount' => $this->faker->optional()->randomFloat(2, 5, 30),
+            'deleted' => false,
         ];
     }
 }

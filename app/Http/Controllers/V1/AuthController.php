@@ -8,6 +8,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -24,7 +25,7 @@ class AuthController extends Controller
             $user = User::create([
                 'email' => request()->email,
                 'fullname' => request()->fullname,
-                'password' => request()->password,
+                'password' => Hash::make(request()->password),
                 'phone_number' => request()->phone_number,
                 'address' => request()->address,
                 'role_id' => 3,
@@ -37,7 +38,11 @@ class AuthController extends Controller
             }
             DB::commit();
             
-            return new UserResource($user);
+            return response()->json([
+                'success' => true,
+                'user' => new UserResource($user),
+                'msg' => 'Register successfully'
+            ]);
         } catch (Exception $e) {
             DB::rollBack();
             throw new Exception($e->getMessage());
@@ -47,7 +52,7 @@ class AuthController extends Controller
     public function login()
     {
         $credentials = request(['email', 'password']);
-        if (! $token = auth()->attempt($credentials)) {
+        if (! $token = auth('api')->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
         

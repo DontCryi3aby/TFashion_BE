@@ -6,13 +6,26 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Gallery extends Model
+class Collect extends Model
 {
     use HasFactory;
+
     public $timestamps = false;
-    protected $guarded = [];
+
+    protected $fillable = [
+        'product_id',
+        'collection_id',
+        'position',
+        'sort_value',
+    ];
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function collection(): BelongsTo
+    {
+        return $this->belongsTo(Collection::class);
     }
 }
