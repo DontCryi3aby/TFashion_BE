@@ -18,8 +18,6 @@ return new class extends Migration
             $table->string('src', 2048);
             $table->string('alt')->nullable();
             $table->integer('position')->default(0);
-            $table->integer('width')->nullable();
-            $table->integer('height')->nullable();
             $table->timestamps();
         });
     }

@@ -16,14 +16,10 @@ class ProductImage extends Model
         'src',
         'alt',
         'position',
-        'width',
-        'height',
     ];
 
     protected $casts = [
         'position' => 'integer',
-        'width' => 'integer',
-        'height' => 'integer',
     ];
 
     public function product(): BelongsTo

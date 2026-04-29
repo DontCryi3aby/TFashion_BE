@@ -17,16 +17,13 @@ class StoreProductRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'vendor_id' => ['required', 'integer', 'exists:vendors,id'],
             'product_type' => ['sometimes', 'nullable', 'string', 'max:100'],
             'title' => ['required', 'string', 'max:255'],
             'body_html' => ['required', 'string'],
-            'vendor' => ['sometimes', 'nullable', 'string', 'max:255'],
             'handle' => ['sometimes', 'nullable', 'string', 'max:255', 'unique:products,handle'],
             'status' => ['sometimes', 'string', 'in:draft,active,archived'],
             'published_at' => ['sometimes', 'nullable', 'date'],
-            'quantity' => ['required', 'numeric'],
-            'price' => ['required', 'numeric'],
-            'discount' => ['sometimes', 'nullable', 'numeric'],
         ];
     }
 }

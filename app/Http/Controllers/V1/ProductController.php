@@ -20,7 +20,7 @@ class ProductController extends Controller
         $filter = new ProductsFilter();
 
         [$sort, $queryItems] = $filter->transform($request);
-        $products = Product::where($queryItems);
+        $products = Product::with('vendor')->where($queryItems);
 
         if ($sort['field']) {
             $products = $products->orderBy($sort['field'], $sort['type']);
@@ -35,7 +35,7 @@ class ProductController extends Controller
     {
         DB::beginTransaction();
         try {
-            $product = Product::create($request->validated());
+            $product = Product::create($request->validated())->load('vendor');
             DB::commit();
 
             return new ProductResource($product);
@@ -47,7 +47,7 @@ class ProductController extends Controller
 
     public function show($id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::with('vendor')->findOrFail($id);
 
         return new ProductResource($product);
     }
@@ -60,7 +60,7 @@ class ProductController extends Controller
             $product->update($request->validated());
             DB::commit();
 
-            return new ProductResource($product);
+            return new ProductResource($product->fresh('vendor'));
         } catch (Exception $e) {
             DB::rollBack();
             throw new Exception($e->getMessage());

@@ -14,18 +14,14 @@ return new class extends Migration
         Schema::create('product_variants', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
-            $table->string('title');
+            $table->json('attributes')->nullable();
             $table->decimal('price', 10, 2);
             $table->decimal('compare_at_price', 10, 2)->nullable();
             $table->string('sku')->nullable();
             $table->integer('inventory_quantity')->default(0);
-            $table->string('inventory_policy')->default('deny');
-            $table->string('fulfillment_service')->default('manual');
             $table->float('weight')->nullable();
-            $table->string('weight_unit')->nullable();
-            $table->boolean('taxable')->default(true);
             $table->integer('position')->default(0);
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
         });
     }
 

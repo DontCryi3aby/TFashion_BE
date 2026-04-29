@@ -9,10 +9,7 @@ class ProductsFilter extends ApiFilter {
         'product_type' => ['eq'],
         'title' => ['eq'],
         'handle' => ['eq'],
-        'vendor' => ['eq'],
-        'quantity' => ['eq', 'gt', 'lt', 'gte', 'lte'],
-        'price' => ['eq', 'gt', 'lt', 'gte', 'lte'],
-        'discount' => ['eq', 'gt', 'lt', 'gte', 'lte'],
+        'vendor_id' => ['eq'],
         'status' => ['eq'],
     ];
 

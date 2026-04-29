@@ -14,16 +14,18 @@ class ProductResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'vendor_id' => $this->vendor_id,
             'product_type' => $this->product_type,
             'title' => $this->title,
             'body_html' => $this->body_html,
-            'vendor' => $this->vendor,
+            'vendor' => $this->whenLoaded('vendor', fn () => [
+                'id' => $this->vendor->id,
+                'name' => $this->vendor->name,
+            ]),
             'handle' => $this->handle,
             'status' => $this->status,
             'published_at' => $this->published_at,
-            'quantity' => $this->quantity,
-            'price' => $this->price,
-            'discount' => $this->discount,
+            'created_at' => $this->created_at,
             'variants' => $this->whenLoaded('variants'),
             'options' => $this->whenLoaded('options'),
             'images' => $this->whenLoaded('images'),

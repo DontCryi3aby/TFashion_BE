@@ -19,9 +19,9 @@ class UpdateProductRequest extends FormRequest
     {
         $method = $this->method();
         $shopify = [
+            'vendor_id' => ['sometimes', 'integer', 'exists:vendors,id'],
             'product_type' => ['sometimes', 'nullable', 'string', 'max:100'],
             'body_html' => ['sometimes', 'string'],
-            'vendor' => ['sometimes', 'nullable', 'string', 'max:255'],
             'handle' => [
                 'sometimes',
                 'nullable',
@@ -36,17 +36,11 @@ class UpdateProductRequest extends FormRequest
         if ($method == 'PUT') {
             return array_merge([
                 'title' => ['required', 'string', 'max:255'],
-                'quantity' => ['required', 'numeric'],
-                'price' => ['required', 'numeric'],
-                'discount' => ['sometimes', 'nullable', 'numeric'],
             ], $shopify);
         }
 
         return array_merge([
             'title' => ['sometimes', 'string', 'max:255'],
-            'quantity' => ['sometimes', 'numeric'],
-            'price' => ['sometimes', 'numeric'],
-            'discount' => ['sometimes', 'nullable', 'numeric'],
         ], $shopify);
     }
 }

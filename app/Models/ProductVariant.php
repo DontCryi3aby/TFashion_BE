@@ -11,27 +11,25 @@ class ProductVariant extends Model
 {
     use HasFactory;
 
+    public const UPDATED_AT = null;
+
     protected $fillable = [
         'product_id',
-        'title',
+        'attributes',
         'price',
         'compare_at_price',
         'sku',
         'inventory_quantity',
-        'inventory_policy',
-        'fulfillment_service',
         'weight',
-        'weight_unit',
-        'taxable',
         'position',
     ];
 
     protected $casts = [
+        'attributes' => 'array',
         'price' => 'decimal:2',
         'compare_at_price' => 'decimal:2',
         'inventory_quantity' => 'integer',
         'weight' => 'float',
-        'taxable' => 'boolean',
         'position' => 'integer',
     ];
 
